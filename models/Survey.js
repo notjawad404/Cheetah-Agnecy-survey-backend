@@ -5,9 +5,9 @@ const surveySchema = new mongoose.Schema({
   progress: {
     step1: { type: String },
     step2: {
-      Comfort: { type: String },
-      Looks: { type: String },
-      Price: { type: String }
+      Comfort: { type: Number },
+      Looks: { type: Number },
+      Price: { type: Number }
     }
   },
   status: { type: String, default: 'in-progress' }
