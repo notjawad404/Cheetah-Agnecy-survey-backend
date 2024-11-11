@@ -10,13 +10,16 @@ const app = express();
 
 // Enable CORS for your frontend's URL
 app.use(cors({
-  origin: 'http://localhost:3001', // Adjust if your frontend runs on a different port
+  origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.use(express.json());
 app.use('/api', surveyRoutes);
+app.get('/', (req, res) => {
+  res.send('Backend connection is working');
+});
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('Connected to MongoDB'))
