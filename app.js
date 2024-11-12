@@ -8,12 +8,12 @@ dotenv.config();
 
 const app = express();
 
-// Enable CORS for your frontend's URL
 app.use(cors({
-  origin: '*',
+  origin: ['http://localhost:3000', 'https://cheetah-agnecy-survey-backend.vercel.app'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 
 app.use(express.json());
 app.use('/api', surveyRoutes);

@@ -2,7 +2,7 @@ const Survey = require('../models/Survey');
 
 // Store survey
 const storeSurvey = async (req, res) => {
-    const { email, progress, status } = req.body;
+    const { email, id, progress, status, step } = req.body;
 
     try {
         // Check if survey already exists for this email
@@ -14,15 +14,23 @@ const storeSurvey = async (req, res) => {
         // Create a new survey with nested progress fields
         const newSurvey = new Survey({
             email,
-            step1: progress?.step1,
-            step2: progress?.step2,
-            status
+            id,
+            progress: {
+                step1: progress?.step1,
+                step2: {
+                    comfort: progress?.step2?.comfort,
+                    looks: progress?.step2?.looks,
+                    price: progress?.step2?.price
+                }
+            },
+            status,
+            step
         });
 
         const savedSurvey = await newSurvey.save();
         res.status(201).json(savedSurvey);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(200).json({ message: error.message });
     }
 };
 
@@ -39,22 +47,25 @@ const getSurveyByEmail = async (req, res) => {
 
         res.json(survey);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(200).json({ message: error.message });
     }
 };
 
 // Update survey
 const updateSurvey = async (req, res) => {
     const { email } = req.params;
-    const { progress, status } = req.body;
+    const { progress, status, step } = req.body;
 
     try {
         const updatedSurvey = await Survey.findOneAndUpdate(
             { email },
             {
-                ...(progress?.step1 && { step1: progress.step1 }),
-                ...(progress?.step2 && { step2: progress.step2 }),
-                ...(status && { status })
+                ...(progress?.step1 && { "progress.step1": progress.step1 }),
+                ...(progress?.step2?.comfort && { "progress.step2.comfort": progress.step2.comfort }),
+                ...(progress?.step2?.looks && { "progress.step2.looks": progress.step2.looks }),
+                ...(progress?.step2?.price && { "progress.step2.price": progress.step2.price }),
+                ...(status && { status }),
+                ...(step && { step })
             },
             { new: true, runValidators: true }
         );
@@ -65,7 +76,7 @@ const updateSurvey = async (req, res) => {
 
         res.json(updatedSurvey);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(200).json({ message: error.message });
     }
 };
 
